@@ -38,8 +38,7 @@ To build and run the project with Docker, you will need to have Docker installed
 ```bash
 git clone "https://github.com/bytebone/verbilobot.git"
 cd verbilobot/docker
-docker build -t verbilobot .
-docker compose up
+docker compose up --build
 ```
 Thanks to Docker being awesome, this works the same on any platform. 
 
