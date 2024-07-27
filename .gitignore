@@ -17,7 +17,7 @@
 /bin/
 tmp/
 files/
-go.sum
+# go.sum
 
 # Ignore local configuration files.
 .idea/
