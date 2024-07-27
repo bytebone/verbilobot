@@ -1,0 +1,10 @@
+name: verbilobot
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: bytebone/verbilobot
+    env_file:
+      - ../.env
+    restart: unless-stopped
