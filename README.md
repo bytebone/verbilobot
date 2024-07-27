@@ -9,7 +9,8 @@ Verbilobot is a Telegram bot written in Go that transcribes voice messages, vide
 
 ## How to Run
 
-However you plan to run the bot, make sure to rename the `.env.example` file to `.env` and fill in your Telegram Bot Token and Groq API Token.
+> [!IMPORTANT]  
+> However you plan to run the bot, make sure to rename the `.env.example` file to `.env` and fill in your Telegram Bot Token and Groq API Token.
 
 ### Local Go
 
@@ -17,14 +18,14 @@ To build and run the project locally, you will need to have Go installed on your
 
 On Linux:
 ```bash
-git clone https://github.com/bytebone/verbilobot.git
+git clone "https://github.com/bytebone/verbilobot.git"
 cd verbilobot
 go build -v -o verbilobot .
 ./verbilobot
 ```
 Or on Windows: 
 ```pwsh
-git clone https://github.com/bytebone/verbilobot.git
+git clone "https://github.com/bytebone/verbilobot.git"
 cd verbilobot
 go build -v -o verbilobot.exe .
 start verbilobot.exe
@@ -35,7 +36,7 @@ start verbilobot.exe
 To build and run the project with Docker, you will need to have Docker installed on your machine.
 
 ```bash
-git clone https://github.com/bytebone/verbilobot.git
+git clone "https://github.com/bytebone/verbilobot.git"
 cd verbilobot/docker
 docker build -t verbilobot .
 docker compose up
@@ -45,3 +46,5 @@ Thanks to Docker being awesome, this works the same on any platform.
 ## Usage
 
 The bot usually takes around 2 seconds to come online. Once the bot is running, you can forward any audio or video files to it to start the transcription process. Thanks to the high speeds at Groq, a minute of incoming audio takes only a few moments to transcribe and return to your chat. The main bottleneck you might notice is the local transcoding, which can take a *noticeable* amount of time to complete.
+
+[verbilobot](https://github.com/bytebone/verbilobot) © 2024 by [bytebone](https://github.com/bytebone) is licensed under [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/?ref=chooser-v1) ![CC](https://chooser-beta.creativecommons.org/img/cc-logo.f0ab4ebe.svg)![BY](https://chooser-beta.creativecommons.org/img/cc-by.21b728bb.svg)![NC](https://chooser-beta.creativecommons.org/img/cc-nc.218f18fc.svg)![SA](https://chooser-beta.creativecommons.org/img/cc-sa.d1572b71.svg)
