@@ -14,7 +14,7 @@ Verbilobot is a Telegram bot written in Go that transcribes voice messages, vide
 
 ### Local Go
 
-To build and run the project locally, you will need to have Go installed on your machine.
+To build and run the project locally, you will need to have [Go](https://go.dev/) and [FFmpeg](https://ffmpeg.org/) installed on your machine.
 
 On Linux:
 ```bash
@@ -33,7 +33,7 @@ start verbilobot.exe
 
 ### With Docker
 
-To build and run the project with Docker, you will need to have Docker installed on your machine.
+To build and run the project with Docker, you will need to have [Docker](https://www.docker.com/) installed on your machine.
 
 ```bash
 git clone "https://github.com/bytebone/verbilobot.git"
