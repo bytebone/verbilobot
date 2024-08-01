@@ -23,6 +23,11 @@ func init() {
 			log.Fatalf("Environment variables not set and no .env file found: %v", err)
 		}
 	}
+
+	if fileutils.CheckFFmpeg() != nil {
+		log.Fatal("Couldn't run ffmpeg. Make sure that it is installed and accessible from your PATH. Or use the docker container.")
+	}
+	log.Println("FFmpeg is present and working")
 }
 
 func main() {
