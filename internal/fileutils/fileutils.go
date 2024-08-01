@@ -7,12 +7,17 @@ import (
 	"mime/multipart"
 	"net/http"
 	"os"
+	"os/exec"
 	"path/filepath"
 
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 	ffmpeg "github.com/u2takey/ffmpeg-go"
 )
+
+func CheckFFmpeg() (err error) {
+	return exec.Command("ffmpeg", "-version").Run()
+}
 
 func Download(b *bot.Bot, f *models.File) (path string, err error) {
 	link := b.FileDownloadLink(f)
@@ -44,7 +49,7 @@ func Download(b *bot.Bot, f *models.File) (path string, err error) {
 }
 
 func Transcode(path string) (out string, err error) {
-	out = path + ".mp3"
+	out = path + ".wav"
 	err = ffmpeg.Input(path).Output(out, ffmpeg.KwArgs{"ar": "16000", "ac": "1", "map": "0:a"}).OverWriteOutput().Silent(true).Run()
 	return
 }
@@ -89,11 +94,11 @@ func Transcribe(path string) (text string, err error) {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return
+		return "", err
 	} else if resp.StatusCode == 429 {
-		return "", fmt.Errorf("too many requests: %s", resp.Header.Get("Retry-After"))
+		return "", fmt.Errorf(resp.Status)
 	} else if resp.StatusCode != 200 {
-		return "", fmt.Errorf("non-success status code %d", resp.StatusCode)
+		return "", fmt.Errorf(resp.Status)
 	}
 	defer resp.Body.Close()
 
