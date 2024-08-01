@@ -99,27 +99,18 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	transcodedPath, err := fileutils.Transcode(path)
 	if err != nil {
 		log.Print(err)
-		if err.Error() == "exit status 0xffffffea" {
-			b.SendMessage(ctx, &bot.SendMessageParams{
-				ChatID: update.Message.Chat.ID,
-				Text:   "This file does not contain any audio, so there's nothing to transcribe.",
-			})
-			if err := fileutils.Delete(path); err != nil {
-				log.Print(err)
-				admin.Alert(ctx, b, fmt.Sprintf("Deletion error: %v", err))
-			} else {
-				log.Printf("Deleted %s", path)
-			}
-			return
+		b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID: update.Message.Chat.ID,
+			Text:   "I was unable to transcribe this file. Are you sure it contains audio?",
+		})
+		admin.Alert(ctx, b, fmt.Sprintf("Transcoding error: %v\nFilename: %s", err, path))
+		if err := fileutils.Delete(path); err != nil {
+			log.Print(err)
+			admin.Alert(ctx, b, fmt.Sprintf("Deletion error: %v", err))
 		} else {
-			admin.Alert(ctx, b, fmt.Sprintf("Transcoding error: %v", err))
-			if err := fileutils.Delete(path); err != nil {
-				log.Print(err)
-			} else {
-				log.Printf("Deleted %s", path)
-			}
-			return
+			log.Printf("Deleted %s", path)
 		}
+		return
 	} else {
 		log.Printf("Transcoded file to: %s", transcodedPath)
 	}
