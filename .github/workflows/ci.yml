@@ -4,8 +4,6 @@ on:
   push:
     paths-ignore: 
       - '.github/**'
-    tags-ignore:
-      - "**"
   pull_request:
   workflow_dispatch:
 
