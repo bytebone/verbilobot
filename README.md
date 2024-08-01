@@ -1,9 +1,9 @@
 # Verbilobot
 
-![Go version](https://img.shields.io/github/go-mod/go-version/bytebone/verbilobot?style=flat-square)
-![License](https://img.shields.io/badge/License-CC_BY--NC--SA_4.0-blue?style=flat-square&logo=creativecommons&logoColor=white&link=https%3A%2F%2Fcreativecommons.org%2Flicenses%2Fby-nc-sa%2F4.0%2F)
-![GitHub CI Status](https://img.shields.io/github/actions/workflow/status/bytebone/verbilobot/ci.yml?style=flat-square&logo=github&label=CI)
-![GitHub Issues](https://img.shields.io/github/issues/bytebone/verbilobot?style=flat-square&label=Issues)
+[![Go version](https://img.shields.io/github/go-mod/go-version/bytebone/verbilobot?style=flat-square)]()
+[![License](https://img.shields.io/badge/License-CC_BY--NC--SA_4.0-blue?style=flat-square&logo=creativecommons&logoColor=white&link=https%3A%2F%2Fcreativecommons.org%2Flicenses%2Fby-nc-sa%2F4.0%2F)](https://creativecommons.org/licenses/by-nc-sa/4.0)
+[![GitHub CI Status](https://img.shields.io/github/actions/workflow/status/bytebone/verbilobot/ci.yml?style=flat-square&logo=github&label=CI)](https://github.com/bytebone/verbilobot/actions/workflows/ci.yml)
+[![GitHub Issues](https://img.shields.io/github/issues/bytebone/verbilobot?style=flat-square&label=Issues)](https://github.com/bytebone/verbilobot/issues)
 
 Verbilobot is a Telegram bot written in Go that transcribes voice messages, video notes, and any other media files. It uses the [Groq API](https://groq.com) to transcribe the audio, and ffmpeg to convert any incoming audio to a format that Groq is happiest to convert.
 
