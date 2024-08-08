@@ -38,7 +38,9 @@ To build and run the project with Docker, you will need to have [Docker](https:/
 ```bash
 git clone "https://github.com/bytebone/verbilobot.git"
 cd verbilobot/docker
-docker compose up --build
+cp ../.env.example ./.env
+# add your tokens to the .env file before continuing
+docker compose up --build -d
 ```
 Thanks to Docker being awesome, this works the same on any platform. 
 

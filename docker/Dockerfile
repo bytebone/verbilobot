@@ -8,9 +8,9 @@ RUN go mod download && go mod verify
 COPY . .
 RUN go build -o /app/verbilobot .
 
-FROM jrottenberg/ffmpeg:7-alpine
+FROM alpine:3
 
+RUN apk add ffmpeg
 COPY --from=builder /app/verbilobot /usr/local/bin
 
-ENTRYPOINT ["verbilobot"]
-CMD [""]
+CMD ["verbilobot"]
