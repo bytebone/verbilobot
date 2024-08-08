@@ -5,6 +5,5 @@ services:
       context: ..
       dockerfile: docker/Dockerfile
     image: bytebone/verbilobot
-    env_file:
-      - ./.env
+    env_file: .env
     restart: unless-stopped
