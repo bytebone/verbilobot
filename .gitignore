@@ -1,4 +1,5 @@
 # Ignore Go build files.
+build/
 *.exe~
 *.dll
 *.dll~
