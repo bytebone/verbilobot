@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytebone/verbilobot/internal/commands"
 	"bytebone/verbilobot/internal/fileutils"
 	"bytebone/verbilobot/internal/handlers"
 	"context"
@@ -34,7 +35,8 @@ func main() {
 	defer cancel()
 
 	opts := []bot.Option{
-		bot.WithDefaultHandler(handlers.DefaultHandler),
+		bot.WithDefaultHandler(commands.Default),
+		bot.WithCallbackQueryDataHandler("llm_", bot.MatchTypePrefix, handlers.LLMCallbackHandler),
 	}
 	log.Println("Creating bot")
 	b, err := bot.New(os.Getenv("VERBILO_TELEGRAM_TOKEN"), opts...)
@@ -49,9 +51,8 @@ func main() {
 	}
 
 	log.Println("Registering handlers")
-	b.RegisterHandler(bot.HandlerTypeMessageText, "/start", bot.MatchTypeExact, handlers.StartHandler)
-	b.RegisterHandler(bot.HandlerTypeMessageText, "/privacy", bot.MatchTypeExact, handlers.PrivacyHandler)
-	b.RegisterHandler(bot.HandlerTypeMessageText, "/chatid", bot.MatchTypeExact, handlers.IDProvider)
+	b.RegisterHandler(bot.HandlerTypeMessageText, "/start", bot.MatchTypeExact, commands.Start)
+	b.RegisterHandler(bot.HandlerTypeMessageText, "/privacy", bot.MatchTypeExact, commands.Privacy)
 	b.RegisterHandlerMatchFunc(handlers.FileMatcher, handlers.FileHandler)
 
 	log.Println("Starting bot")
