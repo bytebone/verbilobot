@@ -11,7 +11,7 @@ import (
 	"github.com/jpoz/groq"
 )
 
-var Buttons = &models.InlineKeyboardMarkup{
+var LLMButtons = &models.InlineKeyboardMarkup{
 	InlineKeyboard: [][]models.InlineKeyboardButton{
 		{
 			{Text: "✍🏼 Shorten Text", CallbackData: "llm_shorten"},
