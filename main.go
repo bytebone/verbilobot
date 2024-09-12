@@ -51,6 +51,9 @@ func main() {
 		log.Print(err)
 	}
 
+	log.Println("Setting Telegram commands")
+	b.SetMyCommands(ctx, commands.CommandList)
+
 	log.Println("Registering handlers")
 	b.RegisterHandler(bot.HandlerTypeMessageText, "/start", bot.MatchTypeExact, commands.Start)
 	b.RegisterHandler(bot.HandlerTypeMessageText, "/privacy", bot.MatchTypeExact, commands.Privacy)
