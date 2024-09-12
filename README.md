@@ -7,9 +7,6 @@
 
 Verbilobot is a Telegram bot written in Go that transcribes voice messages, video notes, and any other media files. It uses the [Groq API](https://groq.com) to transcribe the audio, and ffmpeg to convert any incoming audio to a format that Groq is happiest to convert.
 
-> 
-> This branch will fail to build until upstream changes made for this project are merged in the upstread groq package. See [https://github.com/jpoz/groq/pull/4](https://github.com/jpoz/groq/pull/4).
-
 ## How to Run
 
 > [!IMPORTANT]  
