@@ -1,12 +1,14 @@
 package main
 
 import (
-	"bytebone/verbilobot/internal/fileutils"
-	"bytebone/verbilobot/internal/handlers"
 	"context"
 	"log"
 	"os"
 	"os/signal"
+
+	"github.com/bytebone/verbilobot/internal/commands"
+	"github.com/bytebone/verbilobot/internal/fileutils"
+	"github.com/bytebone/verbilobot/internal/handlers"
 
 	"github.com/go-telegram/bot"
 	"github.com/joho/godotenv"
@@ -34,7 +36,8 @@ func main() {
 	defer cancel()
 
 	opts := []bot.Option{
-		bot.WithDefaultHandler(handlers.DefaultHandler),
+		bot.WithDefaultHandler(commands.Default),
+		bot.WithCallbackQueryDataHandler("llm_", bot.MatchTypePrefix, handlers.LLMCallbackHandler),
 	}
 	log.Println("Creating bot")
 	b, err := bot.New(os.Getenv("VERBILO_TELEGRAM_TOKEN"), opts...)
@@ -48,10 +51,12 @@ func main() {
 		log.Print(err)
 	}
 
+	log.Println("Setting Telegram commands")
+	b.SetMyCommands(ctx, commands.CommandList)
+
 	log.Println("Registering handlers")
-	b.RegisterHandler(bot.HandlerTypeMessageText, "/start", bot.MatchTypeExact, handlers.StartHandler)
-	b.RegisterHandler(bot.HandlerTypeMessageText, "/privacy", bot.MatchTypeExact, handlers.PrivacyHandler)
-	b.RegisterHandler(bot.HandlerTypeMessageText, "/chatid", bot.MatchTypeExact, handlers.IDProvider)
+	b.RegisterHandler(bot.HandlerTypeMessageText, "/start", bot.MatchTypeExact, commands.Start)
+	b.RegisterHandler(bot.HandlerTypeMessageText, "/privacy", bot.MatchTypeExact, commands.Privacy)
 	b.RegisterHandlerMatchFunc(handlers.FileMatcher, handlers.FileHandler)
 
 	log.Println("Starting bot")
