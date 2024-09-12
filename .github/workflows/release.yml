@@ -24,6 +24,6 @@ jobs:
         goos: ${{ matrix.goos }}
         goarch: ${{ matrix.goarch }}
         ldflags: "-s -w"
-        extra_files: LICENSE.md
+        extra_files: LICENSE
         md5sum: FALSE
         overwrite: TRUE
