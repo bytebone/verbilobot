@@ -14,3 +14,5 @@ require (
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/u2takey/go-utils v0.3.1 // indirect
 )
+
+replace github.com/jpoz/groq v0.0.0-20240513145022-7a02894105a0 => github.com/bytebone/groq v0.0.0-20240909145308-1341f117c3cb
