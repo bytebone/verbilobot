@@ -1,12 +1,13 @@
 package handlers
 
 import (
-	"bytebone/verbilobot/internal/admin"
-	"bytebone/verbilobot/internal/fileutils"
 	"context"
 	"fmt"
 	"log"
 	"strings"
+
+	"github.com/bytebone/verbilobot/internal/admin"
+	"github.com/bytebone/verbilobot/internal/fileutils"
 
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"

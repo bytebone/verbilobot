@@ -1,13 +1,14 @@
 package main
 
 import (
-	"bytebone/verbilobot/internal/commands"
-	"bytebone/verbilobot/internal/fileutils"
-	"bytebone/verbilobot/internal/handlers"
 	"context"
 	"log"
 	"os"
 	"os/signal"
+
+	"github.com/bytebone/verbilobot/internal/commands"
+	"github.com/bytebone/verbilobot/internal/fileutils"
+	"github.com/bytebone/verbilobot/internal/handlers"
 
 	"github.com/go-telegram/bot"
 	"github.com/joho/godotenv"
