@@ -2,18 +2,36 @@ package commands
 
 import (
 	"github.com/go-telegram/bot"
-	"github.com/go-telegram/bot/models"
 )
 
-var CommandList = &bot.SetMyCommandsParams{
-	Commands: []models.BotCommand{
-		{
-			Command:     "start",
-			Description: "Start the bot",
-		},
-		{
-			Command:     "privacy",
-			Description: "Show privacy policy",
-		},
+var CommandList = []Command{
+	{
+		Command:     "start",
+		Description: "Start the Bot",
+		HandlerType: bot.HandlerTypeMessageText,
+		MatchType:   bot.MatchTypeExact,
+		HandlerFunc: Start,
 	},
+	{
+		Command:     "privacy",
+		Description: "Show Privacy Policy",
+		HandlerType: bot.HandlerTypeMessageText,
+		MatchType:   bot.MatchTypeExact,
+		HandlerFunc: Privacy,
+	},
+	// {
+	// 	Command:     "chatid",
+	// 	Description: "Get current chat ID",
+	// 	HandlerType: bot.HandlerTypeMessageText,
+	// 	MatchType:   bot.MatchTypeExact,
+	// 	HandlerFunc: ID,
+	// },
+}
+
+type Command struct {
+	Command     string
+	Description string
+	HandlerType bot.HandlerType
+	HandlerFunc bot.HandlerFunc
+	MatchType   bot.MatchType
 }

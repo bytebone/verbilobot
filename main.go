@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"os/signal"
@@ -11,6 +12,7 @@ import (
 	"github.com/bytebone/verbilobot/internal/handlers"
 
 	"github.com/go-telegram/bot"
+	"github.com/go-telegram/bot/models"
 	"github.com/joho/godotenv"
 )
 
@@ -48,16 +50,32 @@ func main() {
 	if err == nil {
 		log.Println("Logged in as @" + u.Name)
 	} else {
-		log.Print(err)
+		log.Println(err)
 	}
 
-	log.Println("Setting Telegram commands")
-	b.SetMyCommands(ctx, commands.CommandList)
-
-	log.Println("Registering handlers")
-	b.RegisterHandler(bot.HandlerTypeMessageText, "/start", bot.MatchTypeExact, commands.Start)
-	b.RegisterHandler(bot.HandlerTypeMessageText, "/privacy", bot.MatchTypeExact, commands.Privacy)
+	log.Println("Registering commands")
+	commandsForAPI := []models.BotCommand{}
+	for _, cmd := range commands.CommandList {
+		b.RegisterHandler(cmd.HandlerType, fmt.Sprintf("/%s", cmd.Command), cmd.MatchType, cmd.HandlerFunc)
+		commandsForAPI = append(commandsForAPI, models.BotCommand{
+			Command:     cmd.Command,
+			Description: cmd.Description,
+		})
+	}
+	_, err = b.SetMyCommands(ctx, &bot.SetMyCommandsParams{
+		Commands: commandsForAPI,
+	})
+	if err != nil {
+		log.Fatal(err)
+	}
 	b.RegisterHandlerMatchFunc(handlers.FileMatcher, handlers.FileHandler)
+	registeredCommands, err := b.GetMyCommands(ctx, &bot.GetMyCommandsParams{})
+	if err != nil {
+		log.Println(err)
+	}
+	for _, cmd := range registeredCommands {
+		log.Println("Registered command: " + cmd.Command)
+	}
 
 	log.Println("Starting bot")
 	b.Start(ctx)
