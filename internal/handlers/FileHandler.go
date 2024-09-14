@@ -88,6 +88,10 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		log.Printf("Transcoded file to: %s", transcodedFile.Name())
 	}
 
+	messagePlaceholder, _ := b.SendMessage(ctx, &bot.SendMessageParams{
+		ChatID: update.Message.Chat.ID,
+		Text:   "Transcription in progress, please wait...",
+	})
 	text, err := fileutils.Transcribe(transcodedFile)
 	if err != nil {
 		log.Println("Error: ", err)
@@ -107,8 +111,9 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		log.Print("Transcribed text successfully")
 
 		// Final text is sent here
-		b.SendMessage(ctx, &bot.SendMessageParams{
+		b.EditMessageText(ctx, &bot.EditMessageTextParams{
 			ChatID:      update.Message.Chat.ID,
+			MessageID:   messagePlaceholder.ID,
 			Text:        text,
 			ReplyMarkup: LLMButtons,
 		})
