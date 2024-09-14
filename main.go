@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"os/signal"
+	"strings"
 
 	"github.com/bytebone/verbilobot/internal/commands"
 	"github.com/bytebone/verbilobot/internal/fileutils"
@@ -73,9 +74,11 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
+	var registeredCommandNames []string
 	for _, cmd := range registeredCommands {
-		log.Println("Registered command: " + cmd.Command)
+		registeredCommandNames = append(registeredCommandNames, cmd.Command)
 	}
+	log.Printf("Registered commands: %s", strings.Join(registeredCommandNames, ", "))
 
 	log.Println("Starting bot")
 	b.Start(ctx)
