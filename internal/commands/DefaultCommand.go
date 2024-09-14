@@ -9,14 +9,16 @@ import (
 )
 
 func Default(ctx context.Context, b *bot.Bot, update *models.Update) {
-	if update.Message.Chat.Type == "private" {
-		_, err := b.SendMessage(ctx, &bot.SendMessageParams{
-			ChatID: update.Message.Chat.ID,
-			Text:   "This message does not contain any files that I can process.",
-		})
-		if err != nil {
-			log.Println(err)
-			return
-		}
-	}
+	log.Println("Default handler was triggered")
+
+	// if update.Message.Chat.Type == "private" {
+	// 	_, err := b.SendMessage(ctx, &bot.SendMessageParams{
+	// 		ChatID: update.Message.Chat.ID,
+	// 		Text:   "This message does not contain any files that I can process.",
+	// 	})
+	// 	if err != nil {
+	// 		log.Println(err)
+	// 		return
+	// 	}
+	// }
 }
