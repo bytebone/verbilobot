@@ -42,7 +42,7 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 					FileID: update.Message.Document.FileID,
 				})
 			} else {
-				log.Print("Denied file of type: " + update.Message.Document.MimeType)
+				log.Println("Denied file of type: " + update.Message.Document.MimeType)
 				return nil, fmt.Errorf("message does not contain an audio file")
 			}
 		default:
@@ -62,7 +62,7 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 
 	rawFile, err := fileutils.Download(b, f)
 	if err != nil {
-		log.Print(err)
+		log.Println(err)
 		admin.Alert(ctx, b, fmt.Sprintf("Download error: %v", err))
 		return
 	} else {
@@ -71,14 +71,14 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 
 	transcodedFile, err := fileutils.Transcode(rawFile)
 	if err != nil {
-		log.Print(err)
+		log.Println(err)
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
 			Text:   "I was unable to transcribe this file. Are you sure it contains audio?",
 		})
 		admin.Alert(ctx, b, fmt.Sprintf("Transcoding error: %v\nFilename: %s", err, rawFile.Name()))
 		if err := fileutils.Delete(rawFile.Name()); err != nil {
-			log.Print(err)
+			log.Println(err)
 			admin.Alert(ctx, b, fmt.Sprintf("Deletion error: %v", err))
 		} else {
 			log.Printf("Deleted %s", rawFile.Name())
@@ -101,14 +101,14 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 			Text:   "I encountered an unknown issue during transcription. Please try again later.",
 		})
 		if err := fileutils.Delete(rawFile.Name(), transcodedFile.Name()); err != nil {
-			log.Print(err)
+			log.Println(err)
 			admin.Alert(ctx, b, fmt.Sprintf("Deletion error: %v", err))
 		} else {
 			log.Printf("Deleted %s and %s", rawFile.Name(), transcodedFile.Name())
 		}
 		return
 	} else {
-		log.Print("Transcribed text successfully")
+		log.Println("Transcribed text successfully")
 
 		// Final text is sent here
 		b.EditMessageText(ctx, &bot.EditMessageTextParams{
@@ -121,7 +121,7 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 
 	err = fileutils.Delete(rawFile.Name(), transcodedFile.Name())
 	if err != nil {
-		log.Print(err)
+		log.Println(err)
 		admin.Alert(ctx, b, fmt.Sprintf("Deletion error: %v", err))
 		return
 	} else {
