@@ -5,11 +5,12 @@ import (
 	"log"
 	"os"
 
+	"github.com/bytebone/verbilobot/internal/admin"
 	"github.com/bytebone/verbilobot/internal/llm"
 
+	"github.com/conneroisu/groq-go"
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
-	"github.com/jpoz/groq"
 )
 
 var LLMButtons = &models.InlineKeyboardMarkup{
@@ -22,7 +23,11 @@ var LLMButtons = &models.InlineKeyboardMarkup{
 }
 
 func LLMCallbackHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
-	groqClient := groq.NewClient(groq.WithAPIKey(os.Getenv("VERBILO_GROQ_TOKEN")))
+	groqClient, err := groq.NewClient(os.Getenv("VERBILO_GROQ_TOKEN"))
+	if err != nil {
+		admin.Alert(ctx, b, err.Error())
+		log.Fatal(err)
+	}
 	inputText := update.CallbackQuery.Message.Message.Text
 
 	b.AnswerCallbackQuery(ctx, &bot.AnswerCallbackQueryParams{
@@ -35,7 +40,7 @@ func LLMCallbackHandler(ctx context.Context, b *bot.Bot, update *models.Update) 
 	case "llm_shorten":
 		log.Println("Shortening transcript contents")
 
-		shortText, err := llm.ShortenText(groqClient, inputText)
+		shortText, err := llm.ShortenText(ctx, groqClient, inputText)
 		if err != nil {
 			log.Println(err)
 			return
@@ -53,7 +58,7 @@ func LLMCallbackHandler(ctx context.Context, b *bot.Bot, update *models.Update) 
 	case "llm_bulletpoints":
 		log.Println("Converting message to bullet points")
 
-		bulletText, err := llm.BulletPoints(groqClient, inputText)
+		bulletText, err := llm.BulletPoints(ctx, groqClient, inputText)
 		if err != nil {
 			log.Println(err)
 			return

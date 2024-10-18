@@ -1,20 +1,22 @@
 package llm
 
 import (
-	"github.com/jpoz/groq"
+	"context"
+
+	"github.com/conneroisu/groq-go"
 )
 
 // Rewrites the given text as bullet points, reducing the texts to the shortest possible length without cutting down on relevant information.
-func BulletPoints(c *groq.Client, text string) (shortText string, err error) {
-	resp, err := c.CreateChatCompletion(groq.CompletionCreateParams{
-		Model: "llama-3.1-8b-instant",
-		Messages: []groq.Message{
+func BulletPoints(ctx context.Context, c *groq.Client, text string) (shortText string, err error) {
+	resp, err := c.CreateChatCompletion(ctx, groq.ChatCompletionRequest{
+		Model: groq.Llama318BInstant,
+		Messages: []groq.ChatCompletionMessage{
 			{
-				Role:    "system",
+				Role:    groq.ChatMessageRoleSystem,
 				Content: "You will be provided a voice transcript. Your task is to reduce the text to bullet points, reducing the texts to the shortest possible length without cutting down on relevant information.",
 			},
 			{
-				Role:    "user",
+				Role:    groq.ChatMessageRoleUser,
 				Content: text,
 			},
 		},

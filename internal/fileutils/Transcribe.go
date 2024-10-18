@@ -1,10 +1,10 @@
 package fileutils
 
 import (
-	"fmt"
+	"context"
 	"os"
 
-	"github.com/jpoz/groq"
+	"github.com/conneroisu/groq-go"
 )
 
 /*
@@ -65,18 +65,22 @@ func transcribe(file *os.File) (text string, err error) {
 }
 */
 
-func Transcribe(file *os.File) (text string, err error) {
-	groqClient := groq.NewClient(groq.WithAPIKey(os.Getenv("VERBILO_GROQ_TOKEN")))
-	resp, err := groqClient.CreateTranscription(groq.TranscriptionCreateParams{
-		File:  file,
-		Model: "whisper-large-v3",
+func Transcribe(ctx context.Context, file *os.File) (text string, err error) {
+	groqClient, err := groq.NewClient(os.Getenv("VERBILO_GROQ_TOKEN"))
+	if err != nil {
+		return "", err
+	}
+	resp, err := groqClient.CreateTranscription(ctx, groq.AudioRequest{
+		Model:    groq.WhisperLargeV3,
+		Format:   groq.AudioResponseFormatText,
+		FilePath: file.Name(),
 	})
 	if err != nil {
 		return "", err
 	}
-	if resp == nil {
-		return "", fmt.Errorf("empty response")
-	}
+	// if resp == "" {
+	// 	return "", fmt.Errorf("empty response")
+	// }
 
 	text = resp.Text
 

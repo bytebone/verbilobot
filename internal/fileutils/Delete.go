@@ -4,9 +4,10 @@ import (
 	"os"
 )
 
-func Delete(paths ...string) (err error) {
-	for _, path := range paths {
-		if err = os.Remove(path); err != nil {
+func Delete(files ...*os.File) (err error) {
+	for _, file := range files {
+		file.Close()
+		if err = os.Remove(file.Name()); err != nil {
 			return
 		}
 	}

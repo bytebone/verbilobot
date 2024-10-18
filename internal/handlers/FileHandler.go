@@ -77,7 +77,7 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 			Text:   "I was unable to transcribe this file. Are you sure it contains audio?",
 		})
 		admin.Alert(ctx, b, fmt.Sprintf("Transcoding error: %v\nFilename: %s", err, rawFile.Name()))
-		if err := fileutils.Delete(rawFile.Name()); err != nil {
+		if err := fileutils.Delete(rawFile); err != nil {
 			log.Println(err)
 			admin.Alert(ctx, b, fmt.Sprintf("Deletion error: %v", err))
 		} else {
@@ -92,7 +92,7 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		ChatID: update.Message.Chat.ID,
 		Text:   "Transcription in progress, please wait...",
 	})
-	text, err := fileutils.Transcribe(transcodedFile)
+	text, err := fileutils.Transcribe(ctx, transcodedFile)
 	if err != nil {
 		log.Println("Error: ", err)
 		admin.Alert(ctx, b, fmt.Sprintf("Transcription error: %v", err))
@@ -100,7 +100,7 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 			ChatID: update.Message.Chat.ID,
 			Text:   "I encountered an unknown issue during transcription. Please try again later.",
 		})
-		if err := fileutils.Delete(rawFile.Name(), transcodedFile.Name()); err != nil {
+		if err := fileutils.Delete(rawFile, transcodedFile); err != nil {
 			log.Println(err)
 			admin.Alert(ctx, b, fmt.Sprintf("Deletion error: %v", err))
 		} else {
@@ -119,7 +119,7 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		})
 	}
 
-	err = fileutils.Delete(rawFile.Name(), transcodedFile.Name())
+	err = fileutils.Delete(rawFile, transcodedFile)
 	if err != nil {
 		log.Println(err)
 		admin.Alert(ctx, b, fmt.Sprintf("Deletion error: %v", err))
