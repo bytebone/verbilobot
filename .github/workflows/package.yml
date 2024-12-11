@@ -32,8 +32,9 @@ jobs:
 
       - name: Build image
         run: |
-          docker build . --tag ghcr.io/${{ steps.lowercase_owner_name.outputs.lowercase }}/${{ steps.lowercase_repo_name.outputs.lowercase }}:latest
-          docker push ghcr.io/${{ steps.lowercase_owner_name.outputs.lowercase }}/${{ steps.lowercase_repo_name.outputs.lowercase }}:latest
+          PACKAGE_NAME="ghcr.io/${{ steps.lowercase_owner_name.outputs.lowercase }}/${{ steps.lowercase_repo_name.outputs.lowercase }}"
+          docker build -f docker/Dockerfile --tag ${PACKAGE_NAME}:${{ github.event.release.tag_name }} --tag ${PACKAGE_NAME}:latest .
+          docker push ${PACKAGE_NAME}:latest
 
       - name: Delete old package versions
         uses: actions/delete-package-versions@v4
