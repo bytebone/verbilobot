@@ -11,7 +11,7 @@ import (
 )
 
 func Alert(ctx context.Context, b *bot.Bot, content string) {
-	adminChatIDString := os.Getenv("VERBILO_ADMIN_CHAT")
+	adminChatIDString := os.Getenv("VERBILO_ADMIN_CHAT_ID")
 	if adminChatIDString == "" {
 		return
 	}
