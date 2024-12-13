@@ -12,36 +12,34 @@ Verbilobot is a Telegram bot written in Go that transcribes voice messages, vide
 > [!IMPORTANT]  
 > However you plan to run the bot, make sure to rename the `.env.example` file to `.env` and fill in your Telegram Bot Token and Groq API Token.
 
+### With Docker
+
+To run the project with Docker, you need to have [Docker](https://www.docker.com/) installed on your machine. From then on, it only takes a couple of seconds.
+
+```bash
+git clone "https://github.com/bytebone/verbilobot.git" && cd verbilobot/
+cp .env.example docker/.env
+cd docker && nano .env
+# edit the env file with your tokens and chat IDs as needed
+docker compose up
+```
+
 ### Local Go
 
 To build and run the project locally, you will need to have [Go](https://go.dev/) and [FFmpeg](https://ffmpeg.org/) installed on your machine.
 
 On Linux:
 ```bash
-git clone "https://github.com/bytebone/verbilobot.git"
-cd verbilobot
+git clone "https://github.com/bytebone/verbilobot.git" && cd verbilobot/
 go build -v -o verbilobot .
 ./verbilobot
 ```
 Or on Windows: 
 ```pwsh
-git clone "https://github.com/bytebone/verbilobot.git"
-cd verbilobot
+git clone "https://github.com/bytebone/verbilobot.git" && cd verbilobot/
 go build -v -o verbilobot.exe .
 start verbilobot.exe
 ```
-
-### With Docker
-
-To build and run the project with Docker, you will need to have [Docker](https://www.docker.com/) installed on your machine.
-
-```bash
-git clone "https://github.com/bytebone/verbilobot.git"
-cd verbilobot/docker
-cp ../.env.example ./.env
-docker compose up --build -d
-```
-Thanks to Docker being awesome, this works the same on any platform. 
 
 ## Usage
 
