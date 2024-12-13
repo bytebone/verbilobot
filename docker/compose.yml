@@ -1,9 +1,9 @@
 name: verbilobot
 services:
   app:
+    image: ghcr.io/bytebone/verbilobot:latest
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    image: bytebone/verbilobot
     env_file: .env
     restart: unless-stopped
