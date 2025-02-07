@@ -60,6 +60,14 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		log.Printf("Got file: %s", f.FileUniqueID)
 	}
 
+	_, err = b.SendChatAction(ctx, &bot.SendChatActionParams{
+		ChatID: update.Message.Chat.ID,
+		Action: models.ChatActionTyping,
+	})
+	if err != nil {
+		log.Println(err)
+	}
+
 	rawFile, err := fileutils.Download(b, f)
 	if err != nil {
 		log.Println(err)
@@ -74,7 +82,7 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		log.Println(err)
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
-			Text:   "I was unable to transcribe this file. Are you sure it contains audio?",
+			Text:   "I found no audio in this file. Are you sure it contains any?",
 		})
 		admin.Alert(ctx, b, fmt.Sprintf("Transcoding error: %v\nFilename: %s", err, rawFile.Name()))
 		if err := fileutils.Delete(rawFile); err != nil {
@@ -88,10 +96,11 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		log.Printf("Transcoded file to: %s", transcodedFile.Name())
 	}
 
-	messagePlaceholder, _ := b.SendMessage(ctx, &bot.SendMessageParams{
-		ChatID: update.Message.Chat.ID,
-		Text:   "Transcription in progress, please wait...",
-	})
+	// messagePlaceholder, _ := b.SendMessage(ctx, &bot.SendMessageParams{
+	// 	ChatID: update.Message.Chat.ID,
+	// 	Text:   "Transcription in progress, please wait...",
+	// })
+
 	text, err := fileutils.Transcribe(ctx, transcodedFile)
 	if err != nil {
 		log.Println("Error: ", err)
@@ -111,12 +120,17 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		log.Println("Transcribed text successfully")
 
 		// Final text is sent here
-		b.EditMessageText(ctx, &bot.EditMessageTextParams{
+		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID:      update.Message.Chat.ID,
-			MessageID:   messagePlaceholder.ID,
 			Text:        text,
 			ReplyMarkup: Buttons,
 		})
+		// b.EditMessageText(ctx, &bot.EditMessageTextParams{
+		// 	ChatID:      update.Message.Chat.ID,
+		// 	MessageID:   messagePlaceholder.ID,
+		// 	Text:        text,
+		// 	ReplyMarkup: Buttons,
+		// })
 	}
 
 	err = fileutils.Delete(rawFile, transcodedFile)
