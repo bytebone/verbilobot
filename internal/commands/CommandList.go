@@ -19,6 +19,15 @@ var CommandList = []Command{
 		MatchType:   bot.MatchTypePrefix,
 		HandlerFunc: Privacy,
 	},
+
+	// {
+	// 	Command:     "alerttest",
+	// 	Description: "Test the admin alert",
+	// 	HandlerType: bot.HandlerTypeMessageText,
+	// 	MatchType:   bot.MatchTypePrefix,
+	// 	HandlerFunc: AlertTest,
+	// },
+
 	// {
 	// 	Command:     "chatid",
 	// 	Description: "Get current chat ID",
