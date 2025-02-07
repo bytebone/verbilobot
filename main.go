@@ -40,7 +40,7 @@ func main() {
 
 	opts := []bot.Option{
 		bot.WithDefaultHandler(commands.Default),
-		bot.WithCallbackQueryDataHandler("llm_", bot.MatchTypePrefix, handlers.LLMCallbackHandler),
+		bot.WithCallbackQueryDataHandler("button_", bot.MatchTypePrefix, handlers.ButtonCallbackHandler),
 	}
 	log.Println("Creating bot")
 	b, err := bot.New(os.Getenv("VERBILO_TELEGRAM_TOKEN"), opts...)

@@ -13,16 +13,16 @@ import (
 	"github.com/go-telegram/bot/models"
 )
 
-var LLMButtons = &models.InlineKeyboardMarkup{
+var Buttons = &models.InlineKeyboardMarkup{
 	InlineKeyboard: [][]models.InlineKeyboardButton{
 		{
-			{Text: "✍🏼 Shorten Text", CallbackData: "llm_shorten"},
-			{Text: "🔘 Bullet Points", CallbackData: "llm_bulletpoints"},
+			{Text: "Shorten Text", CallbackData: "button_llm_shorten"},
+			{Text: "Bullet Points", CallbackData: "button_llm_bulletpoints"},
 		},
 	},
 }
 
-func LLMCallbackHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
+func ButtonCallbackHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	groqClient, err := groq.NewClient(os.Getenv("VERBILO_GROQ_TOKEN"))
 	if err != nil {
 		admin.Alert(ctx, b, err.Error())
@@ -37,7 +37,7 @@ func LLMCallbackHandler(ctx context.Context, b *bot.Bot, update *models.Update) 
 
 	switch update.CallbackQuery.Data {
 
-	case "llm_shorten":
+	case Buttons.InlineKeyboard[0][0].CallbackData: // Shorten
 		log.Println("Shortening transcript contents")
 
 		shortText, err := llm.ShortenText(ctx, groqClient, inputText)
@@ -55,7 +55,7 @@ func LLMCallbackHandler(ctx context.Context, b *bot.Bot, update *models.Update) 
 			return
 		}
 
-	case "llm_bulletpoints":
+	case Buttons.InlineKeyboard[0][1].CallbackData: // Bullet Points
 		log.Println("Converting message to bullet points")
 
 		bulletText, err := llm.BulletPoints(ctx, groqClient, inputText)

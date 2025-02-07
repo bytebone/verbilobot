@@ -115,7 +115,7 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 			ChatID:      update.Message.Chat.ID,
 			MessageID:   messagePlaceholder.ID,
 			Text:        text,
-			ReplyMarkup: LLMButtons,
+			ReplyMarkup: Buttons,
 		})
 	}
 
