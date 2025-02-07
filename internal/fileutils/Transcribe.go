@@ -70,9 +70,9 @@ func Transcribe(ctx context.Context, file *os.File) (text string, err error) {
 	if err != nil {
 		return "", err
 	}
-	resp, err := groqClient.CreateTranscription(ctx, groq.AudioRequest{
+	resp, err := groqClient.Transcribe(ctx, groq.AudioRequest{
 		Model:    groq.WhisperLargeV3,
-		Format:   groq.AudioResponseFormatText,
+		Format:   groq.FormatText,
 		FilePath: file.Name(),
 	})
 	if err != nil {
