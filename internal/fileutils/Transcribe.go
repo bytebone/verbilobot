@@ -71,7 +71,7 @@ func Transcribe(ctx context.Context, file *os.File) (text string, err error) {
 		return "", err
 	}
 	resp, err := groqClient.Transcribe(ctx, groq.AudioRequest{
-		Model:    groq.WhisperLargeV3,
+		Model:    groq.ModelWhisperLargeV3Turbo,
 		Format:   groq.FormatText,
 		FilePath: file.Name(),
 	})
