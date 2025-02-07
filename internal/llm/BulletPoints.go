@@ -13,16 +13,21 @@ func BulletPoints(ctx context.Context, c *groq.Client, text string) (shortText s
 		Messages: []groq.ChatCompletionMessage{
 			{
 				Role:    groq.RoleSystem,
-				Content: "You will be provided a voice transcript. Your task is to reduce the text to bullet points, reducing the texts to the shortest possible length without cutting down on relevant information.",
+				Content: "# TASK\nYou will be provided a voice transcript. Your task is to reduce the text to bullet points, reducing the texts to its core points.\n\n# RULES\n- Since the transcript may contain errors, if you find a sentence does not make sense, correct it at your own discretion for the output.\n- Do not add formatting or markdown to the output. \n- Keep formalities to a minimum and match the tone of the input.\n- Maintain the input language in your output.",
 			},
 			{
 				Role:    groq.RoleUser,
 				Content: text,
 			},
+			{
+				Role:    groq.RoleAssistant,
+				Content: "• ",
+			},
 		},
+		Temperature: 0.65,
 	})
 
-	shortText = resp.Choices[0].Message.Content
+	shortText = "• " + resp.Choices[0].Message.Content
 
 	return
 }

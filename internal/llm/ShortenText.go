@@ -13,7 +13,7 @@ func ShortenText(ctx context.Context, c *groq.Client, text string) (shortText st
 		Messages: []groq.ChatCompletionMessage{
 			{
 				Role:    groq.RoleSystem,
-				Content: "You will be provided a voice transcript. Your task is to remove any speech patterns and filler words that are exclusive to spoken text, and thereby reduce the text to its shortest possible form without removing or altering any of the meaningful contents whatsoever. Do not add formatting, markdown or additional text of your own around the shortened text. The text may be provided in any language, make sure that your shortened version matches the input language.",
+				Content: "# TASK\nYou will be provided a voice transcript. Remove any speech patterns and filler words that are exclusive to spoken text, reducing the text to its shortest possible form without removing or changing any of the relevant contents. \n\n# RULES\n- Do not add formatting or markdown to the output. \n- Do not remove full sentences from the input UNLESS they add nothing meaningfull to the message\n- Separate different topics using TWO line breaks\n- Maintain the input language in your output.",
 			},
 			{
 				Role:    groq.RoleUser,
