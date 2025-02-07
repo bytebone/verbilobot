@@ -7,7 +7,7 @@ on:
       - 'v*'
 
 env:
-  REGISTRY_IMAGE: ghcr.io/bytebone/verbilo-test
+  REGISTRY_IMAGE: ghcr.io/bytebone/verbilobot
 
 jobs:
   build:
