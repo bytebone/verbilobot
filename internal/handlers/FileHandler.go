@@ -5,6 +5,8 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"os"
+	"path/filepath"
 	"strings"
 
 	"github.com/bytebone/verbilobot/internal/admin"
@@ -13,6 +15,15 @@ import (
 	"github.com/go-telegram/bot"
 	"github.com/go-telegram/bot/models"
 )
+
+func fileSizeMB(f *os.File) float64 {
+	fi, err := f.Stat()
+	if err != nil {
+		log.Printf("stat %s: %v", f.Name(), err)
+		return 0
+	}
+	return float64(fi.Size()) / 1_000_000
+}
 
 const maxFileSize = 20 * 1000 * 1000
 
@@ -88,7 +99,7 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	f, err := getFile()
 	if errors.Is(err, errorFileTooBig) {
 		log.Println("Denied file over 20 MB")
-		admin.Alert(ctx, b, fmt.Sprintf("Telegram Error: File > 20 MB received\nFilename: %s\nFilesize: %d MB\nUser: @%s", f.FilePath, f.FileSize/1000000, update.Message.From.Username))
+		admin.Alert(ctx, b, fmt.Sprintf("Telegram Error: File > 20 MB received\nOriginal: %.2f MB", float64(f.FileSize)/1_000_000))
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
 			Text:   "Due to Telegram limitations, the maximum filesize I can process is 20 Megabytes.",
@@ -124,10 +135,22 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	if err != nil {
 		log.Println(err)
 		admin.Alert(ctx, b, fmt.Sprintf("Download error: %v", err))
+		admin.Teable(ctx, admin.TeableResult{
+			Status:     "Failure",
+			Err:        err.Error(),
+			ErrorStage: "download",
+		})
+		b.SendMessage(ctx, &bot.SendMessageParams{
+			ChatID: update.Message.Chat.ID,
+			Text:   "I couldn't download your file from Telegram. Please try again later.",
+		})
 		return
 	} else {
 		log.Printf("Downloaded file to: %s", rawFile.Name())
 	}
+
+	originalMB := fileSizeMB(rawFile)
+	fileType := strings.TrimPrefix(filepath.Ext(rawFile.Name()), ".")
 
 	transcodedFile, err := fileutils.Transcode(rawFile)
 	if err != nil {
@@ -136,7 +159,14 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 			ChatID: update.Message.Chat.ID,
 			Text:   "I found no audio in this file. Are you sure it contains any?",
 		})
-		admin.Alert(ctx, b, fmt.Sprintf("Transcoding error: %v\nFilename: %s", err, rawFile.Name()))
+		admin.Alert(ctx, b, fmt.Sprintf("Transcoding error: %v\nOriginal: %.2f MB", err, originalMB))
+		admin.Teable(ctx, admin.TeableResult{
+			Status:       "Failure",
+			OriginalSize: originalMB,
+			Err:          err.Error(),
+			ErrorStage:   "transcode",
+			FileType:     fileType,
+		})
 		if err := fileutils.Delete(rawFile); err != nil {
 			log.Println(err)
 			admin.Alert(ctx, b, fmt.Sprintf("Deletion error: %v", err))
@@ -148,6 +178,12 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		log.Printf("Transcoded file to: %s", transcodedFile.Name())
 	}
 
+	compressedMB := fileSizeMB(transcodedFile)
+	dur, derr := fileutils.Duration(transcodedFile.Name())
+	if derr != nil {
+		log.Printf("probe: %v", derr)
+	}
+
 	// messagePlaceholder, _ := b.SendMessage(ctx, &bot.SendMessageParams{
 	// 	ChatID: update.Message.Chat.ID,
 	// 	Text:   "Transcription in progress, please wait...",
@@ -156,11 +192,16 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	text, err := fileutils.Transcribe(ctx, transcodedFile)
 	if err != nil {
 		log.Println("Error: ", err)
-		fi, err := transcodedFile.Stat()
-		if err != nil {
-			log.Println("Error: ", err)
-		}
-		admin.Alert(ctx, b, fmt.Sprintf("Transcription error: %v\nFilename: %s\nFilesize: %d MB\nUser: @%s", err, rawFile.Name(), fi.Size()/1000000, update.Message.From.Username))
+		admin.Alert(ctx, b, fmt.Sprintf("Transcription error: %v\nOriginal: %.2f MB\nCompressed: %.2f MB\nDuration: %.2fs", err, originalMB, compressedMB, dur))
+		admin.Teable(ctx, admin.TeableResult{
+			Status:         "Failure",
+			OriginalSize:   originalMB,
+			CompressedSize: compressedMB,
+			Duration:       dur,
+			Err:            err.Error(),
+			ErrorStage:     "transcription",
+			FileType:       fileType,
+		})
 		b.SendMessage(ctx, &bot.SendMessageParams{
 			ChatID: update.Message.Chat.ID,
 			Text:   "I encountered an unknown issue during transcription. Please try again later.",
@@ -180,6 +221,13 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 			ChatID:      update.Message.Chat.ID,
 			Text:        text,
 			ReplyMarkup: Buttons,
+		})
+		admin.Teable(ctx, admin.TeableResult{
+			Status:         "Success",
+			OriginalSize:   originalMB,
+			CompressedSize: compressedMB,
+			Duration:       dur,
+			FileType:       fileType,
 		})
 		// b.EditMessageText(ctx, &bot.EditMessageTextParams{
 		// 	ChatID:      update.Message.Chat.ID,

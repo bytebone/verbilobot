@@ -29,10 +29,10 @@ func Download(b *bot.Bot, f *models.File) (outFile *os.File, err error) {
 	if err != nil {
 		return
 	}
-	defer outFile.Close()
 
 	_, err = io.Copy(outFile, resp.Body)
 	if err != nil {
+		outFile.Close()
 		return
 	}
 
