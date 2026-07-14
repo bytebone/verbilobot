@@ -8,9 +8,9 @@ import (
 
 func Transcode(inFile *os.File) (outFile *os.File, err error) {
 	inPath := inFile.Name()
-	outPath := inPath + ".wav"
+	outPath := inPath + ".flac"
 
-	err = ffmpeg.Input(inPath).Output(outPath, ffmpeg.KwArgs{"ar": "16000", "ac": "1", "map": "0:a"}).OverWriteOutput().Silent(true).Run()
+	err = ffmpeg.Input(inPath).Output(outPath, ffmpeg.KwArgs{"ar": "16000", "ac": "1", "map": "0:a:0", "filter:a": "atempo=1.5"}).OverWriteOutput().Silent(false).Run()
 
 	outFile, err = os.Open(outPath)
 	return
