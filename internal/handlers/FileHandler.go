@@ -14,6 +14,8 @@ import (
 	"github.com/go-telegram/bot/models"
 )
 
+const maxFileSize = 20 * 1000 * 1000
+
 var errorFileTooBig = errors.New("file too big")
 var errorFileNoMedia = errors.New("file has no media")
 var errorFileUnsupported = errors.New("file is unsupported")
@@ -26,47 +28,45 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	getFile := func() (*models.File, error) {
 		switch {
 		case update.Message.Video != nil:
-			if update.Message.Video.FileSize >= 20000000 {
+			if update.Message.Video.FileSize >= maxFileSize {
 				return &models.File{
-					FileSize: update.Message.Document.FileSize,
-					FilePath: update.Message.Document.FileName,
+					FileSize: update.Message.Video.FileSize,
+					FilePath: update.Message.Video.FileName,
 				}, errorFileTooBig
 			}
 			return b.GetFile(ctx, &bot.GetFileParams{
 				FileID: update.Message.Video.FileID,
 			})
 		case update.Message.VideoNote != nil:
-			if update.Message.VideoNote.FileSize >= 20000000 {
+			if update.Message.VideoNote.FileSize >= maxFileSize {
 				return &models.File{
-					FileSize: update.Message.Document.FileSize,
-					FilePath: update.Message.Document.FileName,
+					FileSize: int64(update.Message.VideoNote.FileSize),
 				}, errorFileTooBig
 			}
 			return b.GetFile(ctx, &bot.GetFileParams{
 				FileID: update.Message.VideoNote.FileID,
 			})
 		case update.Message.Audio != nil:
-			if update.Message.Audio.FileSize >= 20000000 {
+			if update.Message.Audio.FileSize >= maxFileSize {
 				return &models.File{
-					FileSize: update.Message.Document.FileSize,
-					FilePath: update.Message.Document.FileName,
+					FileSize: update.Message.Audio.FileSize,
+					FilePath: update.Message.Audio.FileName,
 				}, errorFileTooBig
 			}
 			return b.GetFile(ctx, &bot.GetFileParams{
 				FileID: update.Message.Audio.FileID,
 			})
 		case update.Message.Voice != nil:
-			if update.Message.Voice.FileSize >= 20000000 {
+			if update.Message.Voice.FileSize >= maxFileSize {
 				return &models.File{
-					FileSize: update.Message.Document.FileSize,
-					FilePath: update.Message.Document.FileName,
+					FileSize: update.Message.Voice.FileSize,
 				}, errorFileTooBig
 			}
 			return b.GetFile(ctx, &bot.GetFileParams{
 				FileID: update.Message.Voice.FileID,
 			})
 		case update.Message.Document != nil:
-			if update.Message.Document.FileSize >= 20000000 {
+			if update.Message.Document.FileSize >= maxFileSize {
 				return &models.File{
 					FileSize: update.Message.Document.FileSize,
 					FilePath: update.Message.Document.FileName,
