@@ -150,6 +150,7 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 	}
 
 	originalMB := fileSizeMB(rawFile)
+	var compressedMB float64
 	fileType := strings.TrimPrefix(filepath.Ext(rawFile.Name()), ".")
 
 	transcodedFile, err := fileutils.Transcode(rawFile)
@@ -175,10 +176,10 @@ func FileHandler(ctx context.Context, b *bot.Bot, update *models.Update) {
 		}
 		return
 	} else {
-		log.Printf("Transcoded file to: %s", transcodedFile.Name())
+		compressedMB = fileSizeMB(transcodedFile)
+		log.Printf("Transcoded file to: %s [ %.1f MB → %.1f MB ]", transcodedFile.Name(), originalMB, compressedMB)
 	}
 
-	compressedMB := fileSizeMB(transcodedFile)
 	dur, derr := fileutils.Duration(transcodedFile.Name())
 	if derr != nil {
 		log.Printf("probe: %v", derr)
